@@ -10,8 +10,8 @@ set(CMAKE_SIZE arm-none-eabi-size)
 
 # Do not run linker during compiler checks
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
-
 # Target specs for Cortex-M4 (e.g., STM32F4 series)
 set(CPU_FLAGS "-mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard")
 set(CMAKE_C_FLAGS "${CPU_FLAGS} -ffunction-sections -fdata-sections" CACHE STRING "")
 set(CMAKE_CXX_FLAGS "${CPU_FLAGS} -ffunction-sections -fdata-sections -fno-rtti -fno-exceptions" CACHE STRING "")
+set(CMAKE_ASM_FLAGS "${CPU_FLAGS}" CACHE STRING "")

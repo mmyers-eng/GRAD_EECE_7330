@@ -11,10 +11,16 @@ add_executable(qemu_app
 )
 
 # Linker flags for bare-metal output (nosys specs for stubbed system calls)
+#target_link_options(qemu_app PRIVATE
+#"-specs=nosys.specs"
+#    "-Wl,--gc-sections"
+#    "-Wl,-Ttext=0x08000000" # Flash memory start address for STM32
+#)
+
+# Use linker file
 target_link_options(qemu_app PRIVATE
-    "-specs=nosys.specs"
-    "-Wl,--gc-sections"
-    "-Wl,-Ttext=0x08000000" # Flash memory start address for STM32
+  -T${CMAKE_CURRENT_SOURCE_DIR}/linker.ld
+  -nostartfiles
 )
 
 # Output size after build
