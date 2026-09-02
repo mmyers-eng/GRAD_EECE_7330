@@ -50,7 +50,7 @@ public:
 
 extern "C" int main() {
     UART::init();
-    UART::print_string("\r\n--- Hello from Bare-Metal C++ on QEMU Cortex-M4! ---\r\n");
+    UART::print_string("\r\n--- System Booted ---\r\n");
 
     while (true) {
         // Main loop
