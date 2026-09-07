@@ -40,3 +40,14 @@ gdb-multiarch ./build/qemu_app
 target remote :1234
 info registers
 info functions
+
+
+# Building tinyML
+1. cd tinyml/benchmark/reference_submissions/image_classification
+2. ./setup_example.sh NOTE: This is getting stuck on https://www.cs.toronto.edu/~kriz/cifar-10-binary.tar.gz which is a huge image library
+
+3. mbed compile -m NUCLEO_L4R5ZI -t GCC_ARM
+
+Note: Freezing on tensorflow/lite/micro/tools/make/download_and_extract.sh "https://www.cs.toronto.edu/~kriz/cifar-10-binary.tar.gz"
+
+This is part of the tensor flow lite install
