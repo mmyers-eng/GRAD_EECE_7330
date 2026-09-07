@@ -1,0 +1,3 @@
+[submodule "tinyml"]
+	path = tinyml
+	url = https://github.com/mmyers-eng/tiny
