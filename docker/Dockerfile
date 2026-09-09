@@ -22,6 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libusb-1.0-0-dev \
     zip \
     unzip \
+    xxd \
+    mercurial \
     && rm -rf /var/lib/apt-get/lists/*
 
 
