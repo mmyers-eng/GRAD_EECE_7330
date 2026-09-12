@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t stm32-env .
+docker build -f Dockerfile -t stm32-env ..
