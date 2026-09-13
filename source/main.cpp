@@ -1,5 +1,9 @@
 #include <cstdint>
-
+#include "tensorflow/lite/micro/kernels/micro_ops.h"
+//#include "tensorflow/lite/micro/micro_error_reporter.h"
+#include "tensorflow/lite/micro/micro_interpreter.h"
+#include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
+#include "tensorflow/lite/schema/schema_generated.h"
 // STM32F4 USART1 Register Addresses
 constexpr uint32_t RCC_AHB1ENR = 0x40023830;
 constexpr uint32_t RCC_APB2ENR = 0x40023844;
