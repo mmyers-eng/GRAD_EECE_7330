@@ -5,31 +5,12 @@ project(qemu_baremetal_cpp C CXX ASM)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(qemu_app
-  app/main.cpp
-  bsp/startup.s
-)
-
 # Linker flags for bare-metal output (nosys specs for stubbed system calls)
 #target_link_options(qemu_app PRIVATE
 #"-specs=nosys.specs"
 #    "-Wl,--gc-sections"
 #    "-Wl,-Ttext=0x08000000" # Flash memory start address for STM32
 #)
-
-# Use linker file
-target_link_options(qemu_app PRIVATE
-  -T${CMAKE_CURRENT_SOURCE_DIR}/linker.ld
-  -nostartfiles
-)
-
-
-# Output size after build
-# This will be important as models and TF features can
-# bloat up the image size.
-add_custom_command(TARGET qemu_app POST_BUILD
-    COMMAND ${CMAKE_SIZE} $<TARGET_FILE:qemu_app>
-)
 
 #Tensorflow lite micro
 #TFLM must be pre built using the build_lib.sh script
@@ -43,13 +24,62 @@ set_target_properties(microlite_prebuilt PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES ${TFLM_INCLUDE_DIR}
 )
 
-set(TFLM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/source/tflite-micro")
+set(APP_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/app")
+
+set(TFLM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tflite-micro")
 set(TFLM_DOWNLOADS "${TFLM_INCLUDE_DIR}/tensorflow/lite/micro/tools/make/downloads/")
 
+#hello world test
+set(TFLM_TEST_DIR  "${TFLM_INCLUDE_DIR}/tensorflow/lite/micro/examples/hello_world/")
+set(TFLM_MODEL_DATA_DIR  "${TFLM_INCLUDE_DIR}/gen/cortex_m_generic_cortex-m4_default_gcc/genfiles/tensorflow/lite/micro/examples/hello_world/models/")
+set(TFLM_MODEL_DATA_SOURCES
+  ${TFLM_MODEL_DATA_DIR}/hello_world_int8_model_data.cc
+  ${TFLM_MODEL_DATA_DIR}/hello_world_float_model_data.cc
+  )
+
+set(TFLM_TEST_SOURCES
+    ${TFLM_TEST_DIR}/hello_world_test.cc
+    ${TFLM_MODEL_DATA_SOURCES}
+  )
+
+# Rename main() inside test files to hello_world_test
+set_source_files_properties(
+    "${TFLM_TEST_DIR}/hello_world_test.cc"
+    PROPERTIES COMPILE_FLAGS "-Dmain=hello_world_test"
+)
+
+
+add_executable(qemu_app
+  app/main.cpp
+  bsp/startup.s
+  ${TFLM_TEST_SOURCES}
+)
+
+# Use linker file
+# nostartfiles prevents the libc start files from being added.
+# we use a custom startup.s
+target_link_options(qemu_app PRIVATE
+  -T${CMAKE_CURRENT_SOURCE_DIR}/linker.ld
+  -nostartfiles
+  --specs=nano.specs
+  --specs=nosys.specs
+)
+
 target_include_directories(qemu_app PRIVATE
+  ${APP_INCLUDES}
   ${TFLM_INCLUDE_DIR}
   ${TFLM_DOWNLOADS}/flatbuffers/include
   ${TFLM_DOWNLOADS}/gemmlowp
   ${TFLM_DOWNLOADS}/kissfft
+  ${TFLM_TEST_DIR}
+  ${TFLM_MODEL_DATA_DIR}
 )
 target_link_libraries(qemu_app PRIVATE microlite_prebuilt)
+
+# Output size after build
+# This will be important as models and TF features can
+# bloat up the image size.
+add_custom_command(TARGET qemu_app POST_BUILD
+    COMMAND ${CMAKE_SIZE} $<TARGET_FILE:qemu_app>
+)
+

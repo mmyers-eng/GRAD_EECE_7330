@@ -1,9 +1,4 @@
 #include <cstdint>
-#include "tensorflow/lite/micro/kernels/micro_ops.h"
-//#include "tensorflow/lite/micro/micro_error_reporter.h"
-#include "tensorflow/lite/micro/micro_interpreter.h"
-#include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
-#include "tensorflow/lite/schema/schema_generated.h"
 // STM32F4 USART1 Register Addresses
 constexpr uint32_t RCC_AHB1ENR = 0x40023830;
 constexpr uint32_t RCC_APB2ENR = 0x40023844;
@@ -51,11 +46,13 @@ public:
         }
     }
 };
-
+extern int hello_world_test(int argc, char* argv[]);
 extern "C" int main() {
     UART::init();
     UART::print_string("\r\n--- System Booted ---\r\n");
-
+    UART::print_string("\r\n--- running tests ---\r\n");
+    hello_world_test(0, 0);
+    UART::print_string("\r\n--- Tests Complete ---\r\n");
     while (true) {
         // Main loop
     }
