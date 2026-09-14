@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     qemu-system-arm \
     libusb-1.0-0 \
     libusb-1.0-0-dev \
+    ripgrep \
     zip \
     unzip \
     xxd \
