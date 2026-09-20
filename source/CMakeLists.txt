@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(qemu_baremetal_cpp C CXX ASM)
+project(qemu_app C CXX ASM)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -48,25 +48,42 @@ set_source_files_properties(
     PROPERTIES COMPILE_FLAGS "-Dmain=hello_world_test"
 )
 
-
-add_executable(qemu_app
-  app/main.cpp
+set(BSP_SOURCES
   bsp/startup.s
+  bsp/syscalls.c
+  bsp/driver_bsp.c
+  bsp/driver_uart.c
+)
+
+set(BSP_INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}/bsp
+)
+
+add_executable(${PROJECT_NAME}.elf
+  app/main.cpp
+  ${BSP_SOURCES}
   ${TFLM_TEST_SOURCES}
+)
+
+target_compile_options(${PROJECT_NAME}.elf PRIVATE
+    -g3
+    -gdwarf-4
+    -O0  # Turn off optimizations for true source step-by-step debugging
 )
 
 # Use linker file
 # nostartfiles prevents the libc start files from being added.
 # we use a custom startup.s
-target_link_options(qemu_app PRIVATE
+target_link_options(${PROJECT_NAME}.elf PRIVATE
   -T${CMAKE_CURRENT_SOURCE_DIR}/linker.ld
   -nostartfiles
   --specs=nano.specs
   --specs=nosys.specs
 )
 
-target_include_directories(qemu_app PRIVATE
+target_include_directories(${PROJECT_NAME}.elf PRIVATE
   ${APP_INCLUDES}
+  ${BSP_INCLUDES}
   ${TFLM_INCLUDE_DIR}
   ${TFLM_DOWNLOADS}/flatbuffers/include
   ${TFLM_DOWNLOADS}/gemmlowp
@@ -74,12 +91,12 @@ target_include_directories(qemu_app PRIVATE
   ${TFLM_TEST_DIR}
   ${TFLM_MODEL_DATA_DIR}
 )
-target_link_libraries(qemu_app PRIVATE microlite_prebuilt)
+target_link_libraries(${PROJECT_NAME}.elf PRIVATE microlite_prebuilt)
 
 # Output size after build
 # This will be important as models and TF features can
 # bloat up the image size.
-add_custom_command(TARGET qemu_app POST_BUILD
-    COMMAND ${CMAKE_SIZE} $<TARGET_FILE:qemu_app>
+add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+    COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${PROJECT_NAME}.elf>
 )
 
