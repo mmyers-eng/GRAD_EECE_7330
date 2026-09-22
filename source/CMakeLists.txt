@@ -53,6 +53,7 @@ set(BSP_SOURCES
   bsp/syscalls.c
   bsp/driver_bsp.c
   bsp/driver_uart.c
+  bsp/tfml_microprint_port.c #temporarily needed to deal with TFML microprint bug
 )
 
 set(BSP_INCLUDES
@@ -79,6 +80,10 @@ target_link_options(${PROJECT_NAME}.elf PRIVATE
   -nostartfiles
   --specs=nano.specs
   --specs=nosys.specs
+)
+
+target_link_options(${PROJECT_NAME}.elf PRIVATE
+    -Wl,--allow-multiple-definition #TODO Remove when TFML microprint error is fixed
 )
 
 target_include_directories(${PROJECT_NAME}.elf PRIVATE
