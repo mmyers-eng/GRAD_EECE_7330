@@ -38,15 +38,9 @@ set(TFLM_MODEL_DATA_SOURCES
   )
 
 set(TFLM_TEST_SOURCES
-    ${TFLM_TEST_DIR}/hello_world_test.cc
+    app/tfml_test.cpp
     ${TFLM_MODEL_DATA_SOURCES}
   )
-
-# Rename main() inside test files to hello_world_test
-set_source_files_properties(
-    "${TFLM_TEST_DIR}/hello_world_test.cc"
-    PROPERTIES COMPILE_FLAGS "-Dmain=hello_world_test"
-)
 
 set(BSP_SOURCES
   bsp/startup.s
@@ -78,7 +72,7 @@ target_compile_options(${PROJECT_NAME}.elf PRIVATE
 target_link_options(${PROJECT_NAME}.elf PRIVATE
   -T${CMAKE_CURRENT_SOURCE_DIR}/linker.ld
   -nostartfiles
-  --specs=nano.specs
+#  --specs=nano.specs # disable nano specs or we can't print floats
   --specs=nosys.specs
 )
 
