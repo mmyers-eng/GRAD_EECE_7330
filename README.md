@@ -1,53 +1,49 @@
 # Distributed Embedded Local Machine Learning
-This project explores embedded machine learning run on an embedded target. Presently the project builds an example
-and launches it in qemu, printing a message once the example is booted.
-
+This project explores embedded machine learning run on an embedded target. Presently the project builds an example and launches it in qemu, printing a message once the example is booted.
 
 
 ## Setup Instructions
-### Docker installation:
-Install Docker:
+1. Install Docker:
 https://docs.docker.com/engine/install/ubuntu/
 
-### Building the docker container
-cd ./docker
-docker build -t stm32-env .
+2. Initialize and update all submodules
+git submodule init
+git submodule update
 
-#### Launching the docker container once built
+3. Build the Docker Container
+cd ./docker
+./build_docker.sh
+
+## Application Build Instructions
+Launch the docker container
 ./launch_docker.sh
 
-## Build Instructions
+Build the TFML Library
+NOTE: This command can take up to 30 minutes on slower machines.
 cd source
-./build_emu
+./build_lib.sh
+
+Build the application
+./build_emu.sh
+
+Launch and run the application in qemu
+./launch_emu.sh
+
+When the test is finished in QEMU quit the test
+CTRL-A X
 
 ## Debug instructions
 
 Launch one container then:
 cd source
-./debug_emu
+./debug_emu.sh
 
 Launch a second container
 cd source
 gdb-multiarch ./build/qemu_app
 target remote :1234
+b main
 
 ## Tips:
 - Kill a frozen Qemu session using CTRL-A X
 - kill any process sitting on a socket fuser -k 1234/tcp 2>/dev/null
-
-## Useful Debugging Commands
-gdb-multiarch ./build/qemu_app
-target remote :1234
-info registers
-info functions
-
-
-# Building tinyML
-1. cd tinyml/benchmark/reference_submissions/image_classification
-2. ./setup_example.sh NOTE: This is getting stuck on https://www.cs.toronto.edu/~kriz/cifar-10-binary.tar.gz which is a huge image library
-
-3. mbed compile -m NUCLEO_L4R5ZI -t GCC_ARM
-
-Note: Freezing on tensorflow/lite/micro/tools/make/download_and_extract.sh "https://www.cs.toronto.edu/~kriz/cifar-10-binary.tar.gz"
-
-This is part of the tensor flow lite install
