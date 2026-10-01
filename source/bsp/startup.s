@@ -38,6 +38,7 @@
     .extern   __bss_beg__
     .extern   __bss_end__
     .extern   __stack_end__
+    .extern   __stack_start__
     .extern   __ctors_start__
     .extern   __ctors_end__
     .extern   main
@@ -218,6 +219,17 @@ ctors_loop: ldr   r2, [r0], #4          // Load next constructor address
 run:
     // Call SystemInit()
     // bl     SystemInit //MJM Not used in this implementation
+
+    // Adds a pattern to the stack to check for stack depth
+    ldr   r0, =__stack_start__    @ lowest address of the stack region
+    mov   r1, sp                  @ paint everything below current SP
+    ldr   r2, =0xDEADBEEF
+paint_stack:
+    cmp   r0, r1
+    bhs   paint_done
+    str   r2, [r0], #4
+    b     paint_stack
+paint_done:
 
     // Call main()
     mov    r0, #0                       // argc=0
