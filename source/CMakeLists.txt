@@ -60,6 +60,15 @@ add_executable(${PROJECT_NAME}.elf
   ${TFLM_TEST_SOURCES}
 )
 
+# Compile defs required by TFLM
+target_compile_definitions(${PROJECT_NAME}.elf PRIVATE
+  TF_LITE_STATIC_MEMORY
+  TF_LITE_DISABLE_X86_NEON
+  KERNELS_OPTIMIZED_FOR_SPEED
+  TF_LITE_MCU_DEBUG_LOG
+  CPU_M4=1
+  ARMCM4)
+
 target_compile_options(${PROJECT_NAME}.elf PRIVATE
     -g3
     -gdwarf-4
