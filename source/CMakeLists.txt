@@ -4,6 +4,11 @@ project(qemu_app C CXX ASM)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#vendor code
+set(VENDOR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor)
+set(VENDOR_INCLUDES
+  ${VENDOR_DIR}/cmsis-device-f4/Include/
+  ${VENDOR_DIR}/cmsis_5/CMSIS/Core/Include/)
 
 # Linker flags for bare-metal output (nosys specs for stubbed system calls)
 #target_link_options(qemu_app PRIVATE
@@ -98,6 +103,7 @@ target_include_directories(${PROJECT_NAME}.elf PRIVATE
   ${TFLM_DOWNLOADS}/kissfft
   ${TFLM_TEST_DIR}
   ${TFLM_MODEL_DATA_DIR}
+  ${VENDOR_INCLUDES}
 )
 target_link_libraries(${PROJECT_NAME}.elf PRIVATE microlite_prebuilt)
 
