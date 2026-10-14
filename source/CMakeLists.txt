@@ -86,8 +86,8 @@ target_compile_options(${PROJECT_NAME}.elf PRIVATE
 target_link_options(${PROJECT_NAME}.elf PRIVATE
   -T${CMAKE_CURRENT_SOURCE_DIR}/linker.ld
   -nostartfiles
-#  --specs=nano.specs # disable nano specs or we can't print floats
   --specs=nosys.specs
+  "-Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/qemu_app.map"
 )
 
 target_link_options(${PROJECT_NAME}.elf PRIVATE
