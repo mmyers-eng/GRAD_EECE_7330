@@ -43,6 +43,7 @@
     .extern   __ctors_end__
     .extern   main
     .extern   SystemInit
+    .extern   USART1_IRQHandler    
 
 //=============================================================================
 
