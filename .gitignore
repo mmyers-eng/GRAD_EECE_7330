@@ -70,3 +70,5 @@ Testing/
 
 #vendor dir
 source/vendor/
+#google test dir
+source/tests/googletest/
