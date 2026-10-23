@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <array>
 #include <algorithm>
 template <typename T, size_t N>
 class CircBuffer
@@ -106,4 +106,3 @@ private:
 	bool isFull; ///determines if the buffer is full or not.
 	std::array<T, N> buffer; ///array holding actual buffer elements.
 };
- 
