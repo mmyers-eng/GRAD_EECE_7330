@@ -61,6 +61,8 @@ set(BSP_INCLUDES
 
 add_executable(${PROJECT_NAME}.elf
   app/main.cpp
+  app/PacketFrame.cpp
+  app/Parser.cpp
   ${BSP_SOURCES}
   ${TFLM_TEST_SOURCES}
 )
