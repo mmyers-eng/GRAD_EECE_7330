@@ -2,13 +2,22 @@
 #include <cstdint>
 #include <vector>
 
+//Packet Definition:
+// u8 magic1
+// u8 magic2
+// u8 magic3
+// u8 magic4
+// u32 length: length of the payload
+// u8* payload the length of of the payload is defined by the length field with a maximum of 1024
+// u32 crc: crc of the entire packet NOT including the CRC 
+
 struct PacketHeader
 {
 	uint8_t magic1; //CE
 	uint8_t magic2; //EC
 	uint8_t magic3; //DE
 	uint8_t magic4; //ED
-	uint32_t len; //data len Max is 2048
+	uint32_t len; //data len Max is 1024
 };
 
 //Defines the packet frame
@@ -28,6 +37,7 @@ public:
         constexpr bool isMagic3Valid(const uint8_t byte){return(Magic3==byte);}
 	constexpr bool isMagic4Valid(const uint8_t byte){return(Magic4==byte);}
 	constexpr bool isLengthValid(const uint32_t len){return(len < MaxLen);}
+	bool isPayloadFull(){return(mPayload.size() >= mHeader.len);}
 
 	bool putMagic1(const uint8_t byte);
 	bool putMagic2(const uint8_t byte);
@@ -36,7 +46,7 @@ public:
 	bool putLen(const uint32_t lenVal);
 	bool putPayloadByte(const uint8_t byte);
 	bool putCRC(const uint32_t crc);
-
+        void reset();
 private:
 	struct PacketHeader mHeader;
 	std::vector<uint8_t> mPayload;

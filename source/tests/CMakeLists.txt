@@ -10,8 +10,13 @@ set(APP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../app)
 enable_testing()
 
 add_executable(unit_tests
-    ./TestCircBuffer.cpp
+  ./TestCircBuffer.cpp
+  ./TestPacketParser.cpp
+  ${APP_DIR}/PacketFrame.cpp
+  ${APP_DIR}/Parser.cpp
 )
+
+target_compile_options(unit_tests PRIVATE -g -O0)
 
 target_include_directories(unit_tests PUBLIC
   ${APP_DIR})

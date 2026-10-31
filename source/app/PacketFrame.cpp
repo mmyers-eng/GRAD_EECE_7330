@@ -1,5 +1,5 @@
 #include "PacketFrame.hpp"
-
+#include <cstring>
 
 PacketFrame::PacketFrame():mHeader{},
 			   mCrc{0}
@@ -80,5 +80,11 @@ bool PacketFrame::putCRC(const uint32_t crc)
 	mCrc = crc;
 	//always true for now
 	return(rtn);
+}
 
+void PacketFrame::reset()
+{
+	memset(&mHeader, 0x00, sizeof(mHeader));
+	mCrc = 0;
+	mPayload.clear();
 }

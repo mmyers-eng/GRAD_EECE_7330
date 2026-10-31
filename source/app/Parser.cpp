@@ -1,5 +1,5 @@
 #include <Parser.hpp>
-
+#include <cstdio>
 Parser::Parser()
 {
 	reset();
@@ -50,21 +50,21 @@ void Parser::parseByte(const uint8_t byte)
 		lenCount++;
 		if(lenCount > 3)
 		{
-			if(len)
+			if(pkt.putLen(len))
 			{
 				state = ParserState::PAYLOAD;
 			}
 			else
 			{
-				state = ParserState::MAGIC1;
+				//length invalid
+				reset();
 			}
 		}
 		break;
 	case ParserState::PAYLOAD:
 		if(pkt.putPayloadByte(byte))
 		{
-			payloadCount++;
-			if(payloadCount >= len)
+			if(pkt.isPayloadFull())
 			{
 				state = ParserState::CRC;
 			}
@@ -75,14 +75,20 @@ void Parser::parseByte(const uint8_t byte)
 		}
 		break;
 	case ParserState::CRC:
-		if(pkt.putCRC(byte))
+		crc |= static_cast<uint32_t>(byte) << (crcCount * 8);
+		crcCount++;
+		if(crcCount > 3)
 		{
-			pktBuffer.push(pkt);
-			reset();
-		}
-		else
-		{
-			reset();
+			if(pkt.putCRC(crc))
+			{
+				pktBuffer.push(pkt);
+				reset();
+			}
+			else
+			{
+				//CRC failed
+				reset();
+			}
 		}
 		break;
 	default:
@@ -99,6 +105,8 @@ void Parser::reset()
 {
 	state = ParserState::MAGIC1;
 	lenCount = 0;
-	payloadCount = 0;
+	crcCount = 0;
 	len = 0;
+	crc = 0;
+	pkt.reset();
 }

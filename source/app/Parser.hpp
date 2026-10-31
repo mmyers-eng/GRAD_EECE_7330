@@ -54,6 +54,7 @@ private:
 	CircBuffer<PacketFrame, 3> pktBuffer;
 	PacketFrame pkt;
 	uint32_t lenCount;
-	uint32_t payloadCount;
+	uint32_t crcCount;
 	uint32_t len;
+	uint32_t crc;
 };
