@@ -52,6 +52,7 @@ set(BSP_SOURCES
   bsp/syscalls.c
   bsp/driver_bsp.c
   bsp/driver_uart.c
+  bsp/driver_cpu.c
   bsp/tfml_microprint_port.c #temporarily needed to deal with TFML microprint bug
 )
 
