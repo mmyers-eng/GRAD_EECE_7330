@@ -47,6 +47,7 @@ public:
 	bool putPayloadByte(const uint8_t byte);
 	bool putCRC(const uint32_t crc);
         void reset();
+	std::vector<uint8_t> getPayload(void){return(mPayload);}
 private:
 	struct PacketHeader mHeader;
 	std::vector<uint8_t> mPayload;

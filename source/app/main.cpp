@@ -2,27 +2,44 @@
 #include <cstdio>
 #include "tfml_test.hpp"
 #include "driver_bsp.h"
+#include "Parser.hpp"
+#include "driver_uart.h"
 extern "C" {
 extern void uart_loop_back_test(void);
 }
-// Direct memory-mapped access to Cortex-M System Control Block CPACR register
-//TODO Move this into bsp
-#define SCB_CPACR_PTR ((volatile uint32_t*)0xE000ED88)
-inline void enable_fpu() {
-    // Enable full access to Coprocessors CP10 and CP11 (FPU)
-    *SCB_CPACR_PTR |= ((3UL << 10 * 2) | (3UL << 11 * 2));
-    
-    // ARM Assembly Data & Instruction Synchronization Barriers
-    __asm__ volatile ("dsb" ::: "memory");
-    __asm__ volatile ("isb" ::: "memory");
+
+static Parser * handle = NULL;
+extern "C"
+{
+//caution this function is called in an interrupt.	
+void uart_process_rx(const uint8_t rx_byte)
+{
+	if(handle != NULL)
+	{
+		//TODO race conditions WILL happen here
+		handle->parseByte(rx_byte);
+	}
 }
+
+}
+
 extern "C" int main() {
-	//TODO move to startup
-	enable_fpu();
 	init_bsp();
+	//initialize the parser
+	Parser rxParser{};
+	handle = &rxParser;
 	run_tfml_test();
 	while(true)
 	{
+		PacketFrame pkt;
+		if(handle->getPacket(pkt))
+		{
+			auto payload = pkt.getPayload();
+			for(auto c : payload)
+			{
+				uart_print_char(c);
+			}
+		}
 	}
 	return 0;
 }
