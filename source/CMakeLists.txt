@@ -64,6 +64,7 @@ add_executable(${PROJECT_NAME}.elf
   app/main.cpp
   app/PacketFrame.cpp
   app/Parser.cpp
+  app/MLInterface.cpp
   ${BSP_SOURCES}
   ${TFLM_TEST_SOURCES}
 )
