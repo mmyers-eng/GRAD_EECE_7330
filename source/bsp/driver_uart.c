@@ -3,6 +3,8 @@
 
 #include "stm32f405xx.h"
 
+extern void uart_process_rx(const uint8_t rx_byte);
+
 void uart_init(void)
 {
         // Enable GPIOB and USART1 clocks
@@ -63,7 +65,8 @@ void USART1_IRQHandler()
                 //get the received character from the data register
 		char c = (char)(USART1->DR & 0xFF);
                 // immediately transmit the received character back (echo)
-		uart_print_char(c);
+		//uart_print_char(c);
+		uart_process_rx(c);
 	}	
 }
 
