@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <cstdio>
 #include "MLInterface.hpp"
+#include "SerialUtil.hpp"
 #include "driver_bsp.h"
 #include "Parser.hpp"
 #include "driver_uart.h"
@@ -27,6 +28,7 @@ extern "C" int main() {
 	init_bsp();
 	printf("Init \r\n");
 	MLInterface ml;
+	SerialUtil su;
 	ml.init();
 	//initialize the parser
 	Parser rxParser{};
@@ -43,7 +45,14 @@ extern "C" int main() {
 		if(handle->getPacket(pkt))
 		{
 			auto payload = pkt.getPayload();
-			for(auto c : payload)
+			auto result = su.toFloat(payload.data(),payload.size());
+			std::vector<uint8_t> outBuff(sizeof(float), 0xff);
+			if(result.first)
+			{
+				float mlOut = ml.doInference(result.second);
+				su.fromFloat(mlOut, outBuff.data(), outBuff.size());
+			}
+			for(auto c : outBuff)
 			{
 				uart_print_char(c);
 			}
