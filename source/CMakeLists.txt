@@ -34,17 +34,11 @@ set(APP_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/app")
 set(TFLM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tflite-micro")
 set(TFLM_DOWNLOADS "${TFLM_INCLUDE_DIR}/tensorflow/lite/micro/tools/make/downloads/")
 
-#hello world test
-set(TFLM_TEST_DIR  "${TFLM_INCLUDE_DIR}/tensorflow/lite/micro/examples/hello_world/")
-set(TFLM_MODEL_DATA_DIR  "${TFLM_INCLUDE_DIR}/gen/cortex_m_generic_cortex-m4_default_gcc/genfiles/tensorflow/lite/micro/examples/hello_world/models/")
-set(TFLM_MODEL_DATA_SOURCES
-  ${TFLM_MODEL_DATA_DIR}/hello_world_int8_model_data.cc
-  ${TFLM_MODEL_DATA_DIR}/hello_world_float_model_data.cc
-  )
-
-set(TFLM_TEST_SOURCES
-    app/tfml_test.cpp
-    ${TFLM_MODEL_DATA_SOURCES}
+# Model Sources
+set(MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/models/sinewave/source/")
+set(MODEL_DATA_SOURCES
+  ${MODEL_DIR}/hello_world_int8_model_data.cc
+  ${MODEL_DIR}/hello_world_float_model_data.cc
   )
 
 set(BSP_SOURCES
@@ -67,7 +61,7 @@ add_executable(${PROJECT_NAME}.elf
   app/MLInterface.cpp
   app/SerialUtil.cpp
   ${BSP_SOURCES}
-  ${TFLM_TEST_SOURCES}
+  ${MODEL_DATA_SOURCES}
 )
 
 # Compile defs required by TFLM
@@ -102,12 +96,13 @@ target_link_options(${PROJECT_NAME}.elf PRIVATE
 target_include_directories(${PROJECT_NAME}.elf PRIVATE
   ${APP_INCLUDES}
   ${BSP_INCLUDES}
+  ${MODEL_DIR}
+  
   ${TFLM_INCLUDE_DIR}
   ${TFLM_DOWNLOADS}/flatbuffers/include
   ${TFLM_DOWNLOADS}/gemmlowp
   ${TFLM_DOWNLOADS}/kissfft
   ${TFLM_TEST_DIR}
-  ${TFLM_MODEL_DATA_DIR}
   ${VENDOR_INCLUDES}
 )
 target_link_libraries(${PROJECT_NAME}.elf PRIVATE microlite_prebuilt)
