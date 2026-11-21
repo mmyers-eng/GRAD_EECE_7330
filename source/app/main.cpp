@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <cstdio>
-#include "MLInterface.hpp"
+//#include "MLInterface.hpp"
+#include "ImageClassML.hpp"
 #include "SerialUtil.hpp"
 #include "driver_bsp.h"
 #include "Parser.hpp"
@@ -23,7 +24,7 @@ void uart_process_rx(const uint8_t rx_byte)
 }
 
 }
-
+extern signed char cifar_9779_deer_int8_hwc[3072];
 extern "C" int main() {
 	init_bsp();
 	printf("Init \r\n");
@@ -34,11 +35,59 @@ extern "C" int main() {
 	Parser rxParser{};
 	handle = &rxParser;
 	printf("Test Start \r\n");
-	printf("%f\r\n", ml.doInference(0.0f));
-	printf("%f\r\n", ml.doInference(1.0f));
-	printf("%f\r\n", ml.doInference(3.0f));
-	printf("%f\r\n", ml.doInference(5.0f));
+	//printf("%f\r\n", ml.doInference());
 
+// 	ml.doInference(&cifar_9779_deer_int8_hwc[0], sizeof(cifar_9779_deer_int8_hwc));
+// //TEST CODE	
+// 	//Uncomment for debug print
+// 	const char* kCategoryLabels[10] = {
+// 		"airplane",
+// 		"automobile",
+// 		"bird",
+// 		"cat",
+// 		"deer",
+// 		"dog",
+// 		"frog",
+// 		"horse",
+// 		"ship"
+// 		"truck",
+// 	};
+// 	std::vector<int8_t>outTemp(10, 0xff);
+// 	ml.getOutput(outTemp.data(), outTemp.size());
+	
+// 	for(uint32_t i = 0; i < outTemp.size(); i++)
+// 	{
+// 	 	printf("categorty %s, prob %f \n\r",
+// 		       kCategoryLabels[i],
+// 		       static_cast<float>((outTemp[i] + 128)) * 0.00390625);
+// 	}
+
+// //END TEST	
+	printf("Test Done \r\n");
+#if 1
+	while(true)
+	{
+		PacketFrame pkt;
+		if(handle->getPacket(pkt))
+		{
+			auto payload = pkt.getPayload();
+			std::vector<int8_t>outBuff(10, 0xff);
+			if(payload.size() == 3072)
+			{
+				ml.doInference(reinterpret_cast<int8_t *>(payload.data()), payload.size());
+				ml.getOutput(outBuff.data(), outBuff.size());
+			}
+			for(auto c : outBuff)
+			{
+				uart_print_char(c);
+			}
+		}
+	}
+	return 0;
+
+#endif
+	
+#if 0
 	while(true)
 	{
 		PacketFrame pkt;
@@ -59,4 +108,5 @@ extern "C" int main() {
 		}
 	}
 	return 0;
+#endif
 }
