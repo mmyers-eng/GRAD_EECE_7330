@@ -12,8 +12,10 @@ enable_testing()
 add_executable(unit_tests
   ./TestCircBuffer.cpp
   ./TestPacketParser.cpp
+  ./TestSerialUtil.cpp
   ${APP_DIR}/PacketFrame.cpp
   ${APP_DIR}/Parser.cpp
+  ${APP_DIR}/SerialUtil.cpp
 )
 
 target_compile_options(unit_tests PRIVATE -g -O0)
