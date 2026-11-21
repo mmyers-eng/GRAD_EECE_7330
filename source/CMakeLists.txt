@@ -4,6 +4,7 @@ project(qemu_app C CXX ASM)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 #vendor code
 set(VENDOR_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor)
 set(VENDOR_INCLUDES
@@ -30,15 +31,21 @@ set_target_properties(microlite_prebuilt PROPERTIES
 )
 
 set(APP_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/app")
-
 set(TFLM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tflite-micro")
 set(TFLM_DOWNLOADS "${TFLM_INCLUDE_DIR}/tensorflow/lite/micro/tools/make/downloads/")
 
 # Model Sources
-set(MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/models/sinewave/source/")
+#set(MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/models/sinewave/source/")
+#set(MODEL_DATA_SOURCES
+#  ${MODEL_DIR}/hello_world_int8_model_data.cc
+#  ${MODEL_DIR}/hello_world_float_model_data.cc
+#)
+
+# Model Sources
+set(MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/models/image_class/source/")
 set(MODEL_DATA_SOURCES
-  ${MODEL_DIR}/hello_world_int8_model_data.cc
-  ${MODEL_DIR}/hello_world_float_model_data.cc
+  ${MODEL_DIR}/ic_model_quant_data.cc
+  ${MODEL_DIR}/cifar_9779_deer_int8_hwc.c
   )
 
 set(BSP_SOURCES
@@ -58,7 +65,8 @@ add_executable(${PROJECT_NAME}.elf
   app/main.cpp
   app/PacketFrame.cpp
   app/Parser.cpp
-  app/MLInterface.cpp
+  #  app/MLInterface.cpp
+  app/ImageClassML.cpp
   app/SerialUtil.cpp
   ${BSP_SOURCES}
   ${MODEL_DATA_SOURCES}
@@ -96,8 +104,7 @@ target_link_options(${PROJECT_NAME}.elf PRIVATE
 target_include_directories(${PROJECT_NAME}.elf PRIVATE
   ${APP_INCLUDES}
   ${BSP_INCLUDES}
-  ${MODEL_DIR}
-  
+  ${MODEL_DIR}  
   ${TFLM_INCLUDE_DIR}
   ${TFLM_DOWNLOADS}/flatbuffers/include
   ${TFLM_DOWNLOADS}/gemmlowp
@@ -105,6 +112,7 @@ target_include_directories(${PROJECT_NAME}.elf PRIVATE
   ${TFLM_TEST_DIR}
   ${VENDOR_INCLUDES}
 )
+
 target_link_libraries(${PROJECT_NAME}.elf PRIVATE microlite_prebuilt)
 
 # Output size after build
