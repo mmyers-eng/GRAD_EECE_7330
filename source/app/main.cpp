@@ -36,6 +36,7 @@ extern "C" int main() {
 	handle = &rxParser;
 	printf("Test Start \r\n");
 	//printf("%f\r\n", ml.doInference());
+	ml.doInference(cifar_9779_deer_int8_hwc);
 
 // 	ml.doInference(&cifar_9779_deer_int8_hwc[0], sizeof(cifar_9779_deer_int8_hwc));
 // //TEST CODE	
@@ -64,7 +65,7 @@ extern "C" int main() {
 
 // //END TEST	
 	printf("Test Done \r\n");
-#if 1
+#if 0
 	while(true)
 	{
 		PacketFrame pkt;
