@@ -73,27 +73,35 @@ void MLInterface::init(void)
 	printf("done allocate \n\r");
 }
 
-int MLInterface::doInference(int8_t input[3072])
+int MLInterface::doInference(int8_t * input, size_t bufferSize)
 {
 
 	printf("Do infer \n\r");
+	if(inputSize_bytes == bufferSize)
+	{
+		
+		memcpy(fw_ptr->interp_ptr->input(0)->data.int8, input, inputSize_bytes);
+		printf("Invoke \n\r");
+		fw_ptr->interp_ptr->Invoke();
+		printOutput();
+	}
+	return(0);
+}
+
+void MLInterface::printOutput(void)
+{
 	const char* kCategoryLabels[10] = {
-	"airplane",
-	"automobile",
-	"bird",
-	"cat",
-	"deer",
-	"dog",
-	"frog",
-	"horse",
-	"ship"
-	"truck",
+		"airplane",
+		"automobile",
+		"bird",
+		"cat",
+		"deer",
+		"dog",
+		"frog",
+		"horse",
+		"ship"
+		"truck",
 	};
-
-	memcpy(fw_ptr->interp_ptr->input(0), &input[0], sizeof(input[3072]));
-	printf("Invoke \n\r");
-	fw_ptr->interp_ptr->Invoke();
-
 	//Note output will be 1 x 10 int8 array with a
 	//0.00390625 * (q + 128) scale
 	constexpr uint32_t outSize{10};
@@ -105,8 +113,8 @@ int MLInterface::doInference(int8_t input[3072])
 	{
 		result = static_cast<float>((output->data.int8[i] + 128)) * 0.00390625;
 		printf("categorty %s, prob %f \n\r", kCategoryLabels[i], result);
-	}	
-	return(0);
+	}
+
 }
 
 MLInterface::~MLInterface()

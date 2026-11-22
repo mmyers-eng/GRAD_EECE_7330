@@ -9,7 +9,8 @@ public:
 	MLInterface();
 	~MLInterface();
 	void init(void);
-	int doInference(int8_t input[3072]);
+	int doInference(int8_t * input, size_t bufferSize);
+	void printOutput(void);
 	//int getOutput(int8_t * input, size_t size);
 private:
 	static constexpr uint32_t inputSize_bytes{3072};
