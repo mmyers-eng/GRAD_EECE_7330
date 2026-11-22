@@ -34,18 +34,22 @@ set(APP_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/app")
 set(TFLM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tflite-micro")
 set(TFLM_DOWNLOADS "${TFLM_INCLUDE_DIR}/tensorflow/lite/micro/tools/make/downloads/")
 
-# Model Sources
-#set(MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/models/sinewave/source/")
-#set(MODEL_DATA_SOURCES
-#  ${MODEL_DIR}/hello_world_int8_model_data.cc
-#  ${MODEL_DIR}/hello_world_float_model_data.cc
-#)
+# SINE Model Sources
+set(SINE_MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/models/sinewave/source/")
+set(SINE_MODEL_DATA_SOURCES
+  ${SINE_MODEL_DIR}/hello_world_int8_model_data.cc
+  ${SINE_MODEL_DIR}/hello_world_float_model_data.cc
+  app/MLInterface.cpp
+  app/AppSine.cpp
+)
 
-# Model Sources
-set(MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/models/image_class/source/")
-set(MODEL_DATA_SOURCES
-  ${MODEL_DIR}/ic_model_quant_data.cc
-  ${MODEL_DIR}/cifar_9779_deer_int8_hwc.c
+# IMG Model Sources
+set(IMG_MODEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/models/image_class/source/")
+set(IMG_MODEL_DATA_SOURCES
+  ${IMG_MODEL_DIR}/ic_model_quant_data.cc
+  ${IMG_MODEL_DIR}/cifar_9779_deer_int8_hwc.c
+  app/ImageClassML.cpp
+  app/AppImg.cpp
   )
 
 set(BSP_SOURCES
@@ -65,11 +69,10 @@ add_executable(${PROJECT_NAME}.elf
   app/main.cpp
   app/PacketFrame.cpp
   app/Parser.cpp
-  #  app/MLInterface.cpp
-  app/ImageClassML.cpp
   app/SerialUtil.cpp
   ${BSP_SOURCES}
-  ${MODEL_DATA_SOURCES}
+  ${IMG_MODEL_DATA_SOURCES}
+  #${SINE_MODEL_DATA_SOURCES}
 )
 
 # Compile defs required by TFLM
@@ -104,7 +107,8 @@ target_link_options(${PROJECT_NAME}.elf PRIVATE
 target_include_directories(${PROJECT_NAME}.elf PRIVATE
   ${APP_INCLUDES}
   ${BSP_INCLUDES}
-  ${MODEL_DIR}  
+  ${IMG_MODEL_DIR}
+ # ${SINE_MODEL_DIR}  
   ${TFLM_INCLUDE_DIR}
   ${TFLM_DOWNLOADS}/flatbuffers/include
   ${TFLM_DOWNLOADS}/gemmlowp
