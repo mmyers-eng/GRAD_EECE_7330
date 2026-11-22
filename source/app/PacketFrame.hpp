@@ -28,7 +28,7 @@ public:
 	static constexpr uint8_t Magic2{0xEC};
 	static constexpr uint8_t Magic3{0xDE};
 	static constexpr uint8_t Magic4{0xED};
-	static constexpr uint32_t MaxLen{1024};
+	static constexpr uint32_t MaxLen{4096};
 
 	PacketFrame();
 

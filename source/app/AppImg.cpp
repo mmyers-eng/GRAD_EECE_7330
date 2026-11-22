@@ -39,7 +39,6 @@ void AppImg(void)
 	Parser rxParser{};
 	handle = &rxParser;
 	ml.doInference(&cifar_9779_deer_int8_hwc[0], sizeof(cifar_9779_deer_int8_hwc));
-#if 0	
 	while(true)
 	{
 		PacketFrame pkt;
@@ -58,5 +57,4 @@ void AppImg(void)
 			}
 		}
 	}
-#endif
 }

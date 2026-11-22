@@ -63,27 +63,30 @@ void MLInterface::init(void)
 	fw_ptr->model_ptr =::tflite::GetModel(pretrainedResnet_quant_tflite);
 	TFLITE_CHECK_EQ(fw_ptr->model_ptr->version(), TFLITE_SCHEMA_VERSION);
 	RegisterOps();
-	printf("making arena \n\r");
 	fw_ptr->interp_ptr = std::make_unique<tflite::MicroInterpreter>(fw_ptr->model_ptr,
 									fw_ptr->op_resolver,
 									g_tensor_arena,
 									sizeof(g_tensor_arena));
-	printf("Allocate Tensors \n\r");
 	fw_ptr->interp_ptr->AllocateTensors();
-	printf("done allocate \n\r");
 }
 
 int MLInterface::doInference(int8_t * input, size_t bufferSize)
 {
-
-	printf("Do infer \n\r");
 	if(inputSize_bytes == bufferSize)
 	{
-		
 		memcpy(fw_ptr->interp_ptr->input(0)->data.int8, input, inputSize_bytes);
-		printf("Invoke \n\r");
 		fw_ptr->interp_ptr->Invoke();
-		printOutput();
+	}
+	return(0);
+}
+
+int MLInterface::getOutput(int8_t * output, size_t bufferSize)
+{
+	int rtn{-1};
+	if(outputSize_bytes == bufferSize)
+	{
+		TfLiteTensor* tensor_out = fw_ptr->interp_ptr->output(0);
+		memcpy(output, &tensor_out->data.int8[0], outputSize_bytes);
 	}
 	return(0);
 }
@@ -105,7 +108,6 @@ void MLInterface::printOutput(void)
 	//Note output will be 1 x 10 int8 array with a
 	//0.00390625 * (q + 128) scale
 	constexpr uint32_t outSize{10};
-	printf("Get Output \n\r");
 	TfLiteTensor* output = fw_ptr->interp_ptr->output(0);
 	float result{0.0};
 	
