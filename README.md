@@ -1,14 +1,16 @@
-# Distributed Embedded Local Machine Learning
-This project explores embedded machine learning run on an embedded target. Presently the project builds an example and launches it in qemu, printing a message once the example is booted.
+ # Distributed Embedded Local Machine Learning
+This project explores embedded machine learning run on an emulated embedded target. 
 
+# Core Principles
+
+1. Reduction in depedencies:
 
 ## Setup Instructions
 1. Install Docker:
 https://docs.docker.com/engine/install/ubuntu/
 
-2. Initialize and update all submodules
-- `git submodule init`
-- `git submodule update`
+2. Call the setup script.
+- `./setup.sh`
 
 3. Build the Docker Container
 - `cd ./docker`
@@ -32,6 +34,25 @@ Launch and run the application in qemu
 When the test is finished in QEMU quit the test
 CTRL-A X
 
+## Test Instructions: Image Classification
+
+1. Launch the docker container using ./launch_docker.sh.
+2. Build the app image using ./build_emu.sh.
+3. Launch the emu app using ./launch_emu_sock.sh
+4. In a new terminal download https://cave.cs.toronto.edu/kriz/cifar-10-python.tar.gz
+   to the /scripts directory.
+5. Decompress the cifar-10-python.tar.gz in the scripts directory.
+6. In the scripts directory run (you will only need to do this step once)
+``` bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install requirements.txt
+```
+7. In the scripts directory run:
+```bash
+python3 cifar_packet_test.py
+```
+
 ## Debug instructions
 
 Launch one container then:
@@ -47,3 +68,4 @@ Launch a second container
 ## Tips:
 - Kill a frozen Qemu session using CTRL-A X
 - kill any process sitting on a socket fuser -k 1234/tcp 2>/dev/null
+
