@@ -3,42 +3,63 @@ This project explores embedded machine learning run on an emulated embedded targ
 
 # Core Principles
 
-1. Reduction in depedencies:
+1. Reduction in dependencies:
 
 ## Setup Instructions
 1. Install Docker:
 https://docs.docker.com/engine/install/ubuntu/
 
 2. Call the setup script.
-- `./setup.sh`
+``` bash
+./setup.sh
+```
 
 3. Build the Docker Container
-- `cd ./docker`
-- `./build_docker.sh`
+``` bash
+cd ./docker
+./build_docker.sh
+ ```
 
 ## Application Build Instructions
 Launch the docker container
-- `./launch_docker.sh`
+``` bash
+./launch_docker.sh
+```
 
 Build the TFML Library
 NOTE: This command can take up to 30 minutes on slower machines.
-- `cd source`
-- `./build_lib.sh`
+``` bash
+cd source
+./build_lib.sh
+```
 
 Build the application
-- `./build_emu.sh`
+``` bash
+./build_emu.sh
+```
 
 Launch and run the application in qemu
-- `./launch_emu.sh`
+``` bash
+./launch_emu.sh
+```
 
 When the test is finished in QEMU quit the test
 CTRL-A X
 
 ## Test Instructions: Image Classification
 
-1. Launch the docker container using ./launch_docker.sh.
-2. Build the app image using ./build_emu.sh.
-3. Launch the emu app using ./launch_emu_sock.sh
+1. Launch the docker container using 
+``` bash
+./launch_docker.sh.
+```
+2. Build the app image using 
+``` bash
+./build_emu.sh.
+```
+3. Launch the emu app using 
+``` bash
+./launch_emu_sock.sh
+```
 4. In a new terminal download https://cave.cs.toronto.edu/kriz/cifar-10-python.tar.gz
    to the /scripts directory.
 5. Decompress the cifar-10-python.tar.gz in the scripts directory.
@@ -56,14 +77,20 @@ python3 cifar_packet_test.py
 ## Debug instructions
 
 Launch one container then:
-- `cd source`
-- `./debug_emu.sh`
+
+``` bash
+cd source
+./debug_emu.sh
+```
 
 Launch a second container
-- `cd source`
-- `gdb-multiarch ./build/qemu_app.elf`
-- `target remote :1234`
-- `b main`
+
+``` bash
+cd source
+gdb-multiarch ./build/qemu_app.elf
+target remote :1234
+b main
+```
 
 ## Tips:
 - Kill a frozen Qemu session using CTRL-A X
