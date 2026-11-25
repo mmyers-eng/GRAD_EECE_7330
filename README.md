@@ -50,11 +50,11 @@ CTRL-A X
 
 1. Launch the docker container using 
 ``` bash
-./launch_docker.sh.
+./launch_docker.sh
 ```
 2. Build the app image using 
 ``` bash
-./build_emu.sh.
+./build_emu.sh
 ```
 3. Launch the emu app using 
 ``` bash
