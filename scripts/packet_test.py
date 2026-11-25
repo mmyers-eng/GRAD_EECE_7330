@@ -29,7 +29,7 @@ def build_packet(payload: bytes) -> bytes:
     magic = b"\xCE\xEC\xDE\xED"
     
     length = len(payload)
-    if length > 1024:
+    if length > 4096:
         raise ValueError(f"Payload length {length} exceeds MaxLen (1024)")
     
     header = magic + struct.pack("<I", length)
@@ -41,14 +41,13 @@ def build_packet(payload: bytes) -> bytes:
     
     return packet_without_crc + crc_bytes
 
-def communicate_with_qemu_tcp(host: str, port: int, payload_data: bytes):
+def communicate_with_qemu_tcp(host: str, port: int, payload_data: bytes, size_hint=4):
     """
     Connects to QEMU via a TCP socket (AF_INET), sends the test packet, and prints the response.
     """
     print(f"Connecting to TCP socket at {host}:{port}...")
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     response = None
-    sizeHint = 4
     try:
         sock.connect((host, port))
         
@@ -58,11 +57,11 @@ def communicate_with_qemu_tcp(host: str, port: int, payload_data: bytes):
         sock.sendall(packet)
         
          # Read response with a timeout
-        sock.settimeout(1.0)
+        sock.settimeout(10.0)
         response = b''
         try:
-            for t in range(sizeHint):
-                response = response + sock.recv(sizeHint)
+            for t in range(size_hint):
+                response = response + sock.recv(size_hint)
         except socket.timeout:
             print("<- Timeout waiting for response (target might not echo back).")
         
